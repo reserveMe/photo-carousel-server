@@ -1,6 +1,7 @@
 import React from 'react';
 import { Enzyme, shallow, mount } from 'enzyme';
 import RestaurantPhotos from '../src/components/RestaurantPhotos.jsx';
+import Modal from '../components/Modal.jsx';
 
 describe('<RestaurantPhotos />', () => {
 
@@ -11,20 +12,15 @@ describe('<RestaurantPhotos />', () => {
 
   it('Should display photos if loading screen is not present', () => {
     const wrapper = shallow(<RestaurantPhotos isLoading={true} />);
-    expect(wrapper.find('img')).to
+    expect(wrapper.find('img')).toBe(true);
   })
 
   it('Should have isLoading and photos as it\'s props', () => {
+
   })
 
   it('Should receive a handler function from Carousel parent', () => {
     const wrapper = shallow(<RestaurantPhotos />);
     expect(wrapper.instance().props.photos).toBe(true);
   });
-
-  it('should open a photo Modal window when clicked on', () => {
-
-  })
-
-
 });
