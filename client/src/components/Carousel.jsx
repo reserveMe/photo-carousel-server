@@ -13,7 +13,7 @@ class Carousel extends React.Component {
   }
 
   getPhotos(id) {
-    axios.get(`/api/restaurants/${id}/photos`)
+    axios.get(`/api/restaurants/${id}`)
       .then((response) => {
         this.setState((currentState) => {
           return {

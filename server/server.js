@@ -11,6 +11,8 @@ app.use('/restaurants/:id', express.static('client/dist/'));
 app.use(cors());
 
 app.get('/api/restaurants/:id/', (req, res) => {
+  console.log('hi from get');
+
   const restaurantId = req.params.id;
 
   db.find(restaurantId, (err, response) => {
@@ -18,6 +20,7 @@ app.get('/api/restaurants/:id/', (req, res) => {
       console.log('error on the server');
       throw err;
     } else {
+      console.log(response);
       res.status(200);
       res.send(response);
     }
