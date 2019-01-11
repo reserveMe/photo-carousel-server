@@ -1,6 +1,13 @@
-const faker = require('faker');
 const fs = require('fs');
+const faker = require('faker');
 const path = require('path');
+
+const wstream = fs.createWriteStream(__dirname + '/data.csv', {flags: 'w'});
+let current = 0;
+
+const strPhotoTypes = ['exterior', 'interior'];
+
+const conPhotoTypes = ['food', 'drink'];
 
 const photoURLS = [   
   "https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/240_F_111774771_clVgZm3rv5ejG7h68lz5SOrj511epPJH (1).jpg",
@@ -590,116 +597,64 @@ const photoURLS = [
   "https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/woman-828888__340.jpg"
 ]
 
-const entryCount = 1000;
-
-const progressLog = (index, fileName) => {
-  if (index === 1) {
-    console.log(`WRITING TO ${fileName}`);
-  }
-  if (index === Math.floor(1 * entryCount / 10)) {
-    console.log('-- 10% complete');
-  }
-  if (index === Math.floor(2 * entryCount / 10)) {
-    console.log('---- 20% complete');
-  }
-  if (index === Math.floor(3 * entryCount / 10)) {
-    console.log('------ 30% complete');
-  }
-  if (index === Math.floor(4 * entryCount / 10)) {
-    console.log('-------- 40% complete');
-  }
-  if (index === Math.floor(5 * entryCount / 10)) {
-    console.log('---------- 50% complete');
-  }
-  if (index === Math.floor(6 * entryCount / 10)) {
-    console.log('------------ 60% complete');
-  }
-  if (index === Math.floor(7 * entryCount / 10)) {
-    console.log('-------------- 70% complete');
-  }
-  if (index === Math.floor(8 * entryCount / 10)) {
-    console.log('---------------- 80% complete');
-  }
-  if (index === Math.floor(9 * entryCount / 10)) {
-    console.log('------------------ 90% complete');
-  }
-  if (index === entryCount) {
-    console.log(`-------------------- SUCCESSFULLY WRITTEN TO ${fileName}`);
-  }
-};
-
-const strPhotoTypes = ['exterior', 'interior'];
-
-const conPhotoTypes = ['food', 'drink'];
-//10-100 photos per restaurant, total photos available = 585
-
-const generateUserPhotos = () => {
-  const userPhotos = [];
-
-  for (let i = 0; i < generateRandomNumber(10, 100); i += 1) {
-    let photoArraySchema;
-    if (i < 4) {
-      photoArraySchema = {
-        photo_type: strPhotoTypes[generateRandomNumber(0, 1)],
-        date: faker.date.recent(90),
-        username: faker.name.findName(),
-        photoURL: photoURLS[generateRandomNumber(0, 585)]
-      };
-    } else {
-        photoArraySchema = {
-          photo_type: conPhotoTypes[generateRandomNumber(0, 1)],
-          date: faker.date.recent(90),
-          username: faker.name.findName(),
-          photoURL: photoURLS[generateRandomNumber(0, 585)]
-        };
-
-    }
-    userPhotos.push(photoArraySchema);
-  }
-  return userPhotos;
-};
-
-
-const generateRandomNumber =(min_value , max_value) =>
+const generateRandomNumber = (min_value , max_value) =>
   {
     let random_number = Math.random() * (max_value - min_value) + min_value;
     return Math.floor(random_number);
-  }
+};
 
-const generateRandomBinary =(min_value , max_value) =>
+const generateRandomBinary = (min_value , max_value) =>
   {
     return Math.round(Math.random());
   }
 
+let i = 0;
 
-const generateAndWriteRestaurantData = () => {
-  const stream = fs.createWriteStream('restaurantData.txt');
-  let i = 0;
+const WriteOne = () => {
+	while (i < 10000){
+	  let res = [];
+		for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
+      let photoArraySchema;
 
-  const write = () => {
-    let proceed = true;
-    while (i <= entryCount && proceed) {
-      progressLog(i, 'restaurantData.txt');
-      const entry = {
+			current ++;
+
+			if (j < 4) {
+        photoArraySchema = {
+          photo_type: strPhotoTypes[generateRandomBinary()],
+          date: faker.date.recent(90),
+          username: faker.name.findName(),
+          photoURL: photoURLS[generateRandomNumber(0, 584)]
+        };
+      } else {
+        photoArraySchema = {
+          photo_type: conPhotoTypes[generateRandomBinary()],
+          date: faker.date.recent(90),
+          username: faker.name.findName(),
+          photoURL: photoURLS[generateRandomNumber(0, 584)]
+        }; 
+      }  
+			
+      res.push(photoArraySchema);
+
+		}
+
+    let entry = {
         _id: i,
-        name: faker.name.findName(),
-        userPhotos: generateUserPhotos()
+        name: faker.company.companyName(),
+        restaurant_photos: res,
       };
-      const entryAndNewLine = `${JSON.stringify(entry)}\n`;
-      proceed = stream.write(entryAndNewLine);
-      i += 1;
-    }
 
-    if (!proceed) {
-      stream.once('drain', () => {
-        write();
-      });
-    }
-  };
+      if(!wstream.write(JSON.stringify(entry) + '\n')) {
+        return;
+      }
 
-  write();
+       i++;
+	}
+	wstream.end();
 };
 
-//generateAndWriteRestaurantData();
-var test = generateRandomBinary();
-console.log(test);
+wstream.on('drain', () => {
+	WriteOne();
+});
+
+WriteOne();
