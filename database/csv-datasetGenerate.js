@@ -2,7 +2,8 @@ const fs = require('fs');
 const faker = require('faker');
 const path = require('path');
 
-const wstream = fs.createWriteStream(__dirname + '/data.csv', {flags: 'w'});
+//const wstream = fs.createWriteStream(__dirname + '/data.csv', {flags: 'w'});
+const wstream = fs.createWriteStream(__dirname + '/test.txt', {flags: 'w'});
 let current = 0;
 
 const strPhotoTypes = ['exterior', 'interior'];
@@ -597,21 +598,19 @@ const photoURLS = [
   "https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/woman-828888__340.jpg"
 ]
 
-const generateRandomNumber = (min_value , max_value) =>
-  {
+const generateRandomNumber = (min_value , max_value) => {
     let random_number = Math.random() * (max_value - min_value) + min_value;
     return Math.floor(random_number);
 };
 
-const generateRandomBinary = (min_value , max_value) =>
-  {
+const generateRandomBinary = (min_value , max_value) => {
     return Math.round(Math.random());
-  }
+};
 
 let i = 0;
 
 const WriteOne = () => {
-	while (i < 10000){
+	while (i < 10000000){
 	  let res = [];
 		for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
       let photoArraySchema;
