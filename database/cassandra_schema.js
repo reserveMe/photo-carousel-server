@@ -13,7 +13,7 @@
 
 //    //look up data center usage
 
-CREATE KEYSPACE sample_keyspace
+CREATE KEYSPACE sdc
 WITH REPLICATION = {
 'class' : 'SimpleStrategy',
 'replication_factor' : 3
@@ -35,13 +35,18 @@ WITH REPLICATION = {
 // //test query syntax
 
 
-// INSERT INTO test.restaurants (id, name, restaurant_photos) '{"id":0,"name":"Lehner, Schuppe and Walker","restaurant_photos":[{},{}]}';
+const setup = `CREATE TABLE sdc.restaurants (
+    id int  PRIMARY KEY,
+    name text,
+    phototags  list <frozen<map<text, text>>>
+);`
 
-// create table jsonvalues (id text primary key, name text, restaurant_photos list>);
+// client.execute(setup, function (err, result) {
+//        console.log('setup', err)
+//        //var restaurant = result.first();
+//        //console.log('restaurant', restaurant);
+// });
 
-// CREATE type test.photo ( map <text, text> );
-
-// CREATE TABLE test.clients ( id int  PRIMARY KEY, name text, sales list> );
 
 
 // CREATE TABLE test.fourth (

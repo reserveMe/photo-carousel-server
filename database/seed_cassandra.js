@@ -6,7 +6,7 @@ const cassandraMAP = require("cassandra-map");
 
 //127.0.0.1:9042
 const cassandra = require('cassandra-driver');
-const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], localDataCenter: 'datacenter1', keyspace: 'test' });
+const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], localDataCenter: 'datacenter1', keyspace: 'json' });
 
 client.connect(function (err) {
   //console.log('connection failed', err);
@@ -617,52 +617,51 @@ const generateRandomBinary = (min_value , max_value) => {
 
 let i = 0;
 
-// const setup = `CREATE TABLE test.new_restaurants (
+// const setup = `CREATE TABLE json.check (
 //     id int  PRIMARY KEY,
 //     name text,
 //     phototags  list <frozen<map<text, text>>>
 // );`
 
 // client.execute(setup, function (err, result) {
-//       	console.log('setup', err)
+//        console.log('setup', err)
 //        //var restaurant = result.first();
 //        //console.log('restaurant', restaurant);
 // });
 
 
 const seedCass = () => {
-	while (i < 1000000){
-	  let res = [];
-		for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
-          let photoArraySchema;
+  while (i < 100){
+    let res = [];
+    current ++;
 
-			current ++;
+    for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
+      let photoArraySchema;
 
-			if (j < 4) {
+     
+
+      if (j < 4) {
         photoArraySchema = {
-          photo_type: strPhotoTypes[generateRandomBinary()],
-          date: faker.date.recent(90),
-          username: faker.name.findName(),
-          photoURL: photoURLS[generateRandomNumber(0, 584)]
+          'photo_type': strPhotoTypes[generateRandomBinary()],
+          'date': faker.date.recent(90),
+          'photoURL': photoURLS[generateRandomNumber(0, 584)]
         };
       } else {
         photoArraySchema = {
           'photo_type': conPhotoTypes[generateRandomBinary()],
           'date': faker.date.recent(90),
-          'username': faker.name.findName(),
           'photoURL': photoURLS[generateRandomNumber(0, 584)]
         }; 
       }  
-			 var test = cassandraMAP.stringify(photoArraySchema)
-			// console.log('check', test.slice(1, test.length-1));
+      // console.log('check', test.slice(1, test.length-1));
          res.push(photoArraySchema);
             //console.log('array', res)
 
-		}
+    }
 
     let entry = {
         '_id': current,
-        'name': faker.company.companyName(),
+        'name': faker.lorem.word(),
         restaurant_photos: res,
     };
 
@@ -674,19 +673,32 @@ const seedCass = () => {
       // var test = entry['_id'] + ", '" + entry['name'] + "', " + cassandraMAP.stringify(entry['restaurant_photos']);
       const restaurant_photos = cassandraMAP.stringify(entry['restaurant_photos']);
       
-      const query = `INSERT INTO new_restaurants (id, name, phototags) VALUES (${entry['_id']}, '${entry['name']}', ${restaurant_photos});`;
+      const query = `INSERT INTO json.check (id, name, phototags) VALUES (${entry['_id']}, '${entry['name']}', ${restaurant_photos});`;
       
       client.execute(query, function (err, result) {
-      	console.log('query error', err)
+        console.log('query status', result)
+        console.log('query error', err)
        //var restaurant = result.first();
        //console.log('restaurant', restaurant);
       });
 
       i++;
-	}
+  }
 
 
 };
 
+let k = 0;
 
- seedCass();
+seedCass();
+
+// const paginationFunc = () => {
+//    for (k; k < 1000; k += 1) {
+//      seedCass();
+//    }
+
+//    client.shutdown();
+//  }
+
+// paginationFunc();
+

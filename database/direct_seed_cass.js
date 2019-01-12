@@ -1,12 +1,17 @@
-const fs = require('fs');
-const faker = require('faker');
 const path = require('path');
+const faker = require('faker');
 const cassandraMAP = require("cassandra-map");
-const json2csv = require('json2csv').parse;
+const async = require("async");
 
 
-const wstream = fs.createWriteStream(__dirname + '/data.csv', {flags: 'w'});
-//const wstream = fs.createWriteStream(__dirname + '/test.txt', {flags: 'w'});
+//127.0.0.1:9042
+const cassandra = require('cassandra-driver');
+const client = new cassandra.Client({ contactPoints: ['127.0.0.1:9042'], localDataCenter: 'datacenter1', keyspace: 'sdc' });
+
+client.connect(function (err) {
+  //console.log('connection failed', err);
+})
+
 let current = 0;
 
 const strPhotoTypes = ['exterior', 'interior'];
@@ -612,17 +617,15 @@ const generateRandomBinary = (min_value , max_value) => {
 
 let i = 0;
 
-const generateRecords = () => {
-
-  let recordsArray = [];
-
-	while (i < 100){
-	  let res = [];
+const seedCass = () => {
+  while (i < 2000){
+    let res = [];
     current ++;
-		for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
+
+    for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
       let photoArraySchema;
 
-			if (j < 4) {
+      if (j < 4) {
         photoArraySchema = {
           'photo_type': strPhotoTypes[generateRandomBinary()],
           'date': faker.date.recent(90),
@@ -637,7 +640,9 @@ const generateRecords = () => {
       }  
       // console.log('check', test.slice(1, test.length-1));
          res.push(photoArraySchema);
-		}
+            //console.log('array', res)
+
+    }
 
     let entry = {
         '_id': current,
@@ -645,21 +650,39 @@ const generateRecords = () => {
         restaurant_photos: res,
     };
 
-      recordsArray.push(entry);
+      //var cassEntry = JSON.parse(JSON.stringify(entry['restaurant_photos']));
 
-       i++;
-	}
-	return recordsArray;
+      //console.log(cassEntry);
+
+      // var test = cassandraMAP.stringify(entry['restaurant_photos']);
+      // var test = entry['_id'] + ", '" + entry['name'] + "', " + cassandraMAP.stringify(entry['restaurant_photos']);
+      const restaurant_photos = cassandraMAP.stringify(entry['restaurant_photos']);
+      
+      const query = `INSERT INTO restaurants (id, name, phototags) VALUES (${entry['_id']}, '${entry['name']}', ${restaurant_photos});`;
+      
+      client.execute(query, function (err, result) { 
+       //var restaurant = result.first();
+       //console.log('restaurant', restaurant);
+      });
+
+      i++;
+  }
+
+
 };
 
-const fields = ['_id', 'name', 'restaurant_photos'];
-const opts = { fields };
+let k = 0;
 
-const csv = json2csv(generateRecords(), opts);
 
-// const writeStream = fs.createWriteStream(path.join(__dirname, '/data.csv'), { flags: 'w' });
 
-fs.writeFile(path.join(__dirname, '/data.csv'), csv, (err) => {  
-    if (err) throw err;
-    console.log('Data seeding complete!');
-});
+async function paginationFunc() {
+   for (k; k < 5000; k += 1) {
+     await seedCass();
+    
+   }
+
+   client.shutdown();
+ }
+
+paginationFunc();
+
