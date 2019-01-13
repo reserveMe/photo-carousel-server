@@ -679,7 +679,6 @@ const generateAndWriteRestaurantData = () => {
   const write = () => {
     let proceed = true;
     while (i <= entryCount && proceed) {
-      progressLog(i, 'restaurantData.txt');
       const entry = {
         _id: i,
         name: faker.name.findName(),

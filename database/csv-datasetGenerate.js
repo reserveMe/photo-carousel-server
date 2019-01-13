@@ -5,9 +5,8 @@ const cassandraMAP = require("cassandra-map");
 const json2csv = require('json2csv').parse;
 
 
-const wstream = fs.createWriteStream(__dirname + '/data.csv', {flags: 'w'});
+//const wstream = fs.createWriteStream(__dirname + '/max_data.csv', {flags: 'w'});
 //const wstream = fs.createWriteStream(__dirname + '/test.txt', {flags: 'w'});
-let current = 0;
 
 const strPhotoTypes = ['exterior', 'interior'];
 
@@ -610,15 +609,10 @@ const generateRandomBinary = (min_value , max_value) => {
     return Math.round(Math.random());
 };
 
-let i = 0;
 
-const generateRecords = () => {
-
-  let recordsArray = [];
-
-	while (i < 100){
-	  let res = [];
-    current ++;
+const generateRecords = (id) => {
+	let res = [];
+  let entry;
 		for (let j = 0; j < generateRandomNumber(10, 100); j += 1) {
       let photoArraySchema;
 
@@ -637,29 +631,68 @@ const generateRecords = () => {
       }  
       // console.log('check', test.slice(1, test.length-1));
          res.push(photoArraySchema);
-		}
 
-    let entry = {
-        '_id': current,
+    entry = {
+        '_id': id,
         'name': faker.lorem.word(),
         restaurant_photos: res,
     };
 
-      recordsArray.push(entry);
+      
 
-       i++;
 	}
-	return recordsArray;
+
+  const fields = ['_id', 'name', 'restaurant_photos'];
+  const opts = { fields };
+	return json2csv(entry, opts);
 };
 
-const fields = ['_id', 'name', 'restaurant_photos'];
-const opts = { fields };
 
-const csv = json2csv(generateRecords(), opts);
 
-// const writeStream = fs.createWriteStream(path.join(__dirname, '/data.csv'), { flags: 'w' });
 
-fs.writeFile(path.join(__dirname, '/data.csv'), csv, (err) => {  
+
+
+const TOTAL_RECORDS = 100;
+const MAX_PER_FILE = 50;
+let restaurantsSoFar = 0;
+
+const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
+  let i = 0;
+  let docID = 1;
+  let outputStream = fs.createWriteStream(path.join(__dirname, `/restaurantdata${docID}.csv`), { flags: 'w' })
+  .on('error', (err) => {
     if (err) throw err;
-    console.log('Data seeding complete!');
-});
+  })
+
+  const write = () => {
+    if(i === recordsPerFile) {//Check to see if i === recordsPerFile to initiate stream to new docID
+      i = 0;
+      docID++;
+      outputStream = fs.createWriteStream(path.join(__dirname, `/restaurantdata${docID}.csv`))
+      .on('error', (err) =>{
+        if (err) throw err;
+      })      
+    }
+
+    if(restaurantsSoFar === totalRecords) { 
+      return;
+    }
+
+    restaurantsSoFar++;
+    const ok2Write = outputStream.write(generateRecords(restaurantsSoFar));
+    if (ok2Write) {
+      i++;
+      write();
+    } else {
+      outputStream.once('drain', ()=> {
+        write();
+      })
+    }
+    console.log('Finished');
+  }
+  write();
+}
+
+
+writeRestaurantEntries(TOTAL_RECORDS, MAX_PER_FILE);
+
