@@ -47,7 +47,7 @@ const setup = `CREATE TABLE test.new (
 //        //console.log('restaurant', restaurant);
 // });
 
-COPY test.new (id, name, phototags) FROM 'testdata1.csv' WITH DELIMITER='|' AND HEADER=FALSE;
+COPY test.new (id, name, phototags) FROM 'testdata1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=1 AND PAGESIZE=10 AND DELIMITER='|' AND HEADER=FALSE;
 
 COPY test.new FROM 'testdata1.csv' WITH HEADER=FALSE;
 
