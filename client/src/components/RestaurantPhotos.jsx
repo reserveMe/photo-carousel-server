@@ -12,7 +12,6 @@ class RestaurantPhotos extends React.Component {
       restaurantHeader: null,
       currentModal: '',
       currentModalIndex: 0,
-      headerStyleToDisplay: [0, 10],
     }
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
@@ -26,7 +25,7 @@ class RestaurantPhotos extends React.Component {
     this.setState({ restaurantHeader: headerStyleToDisplay[this.generateHeaderView()] })
   }
 
-  openModal() {
+  openModal(event) {
     const { photos } = this.props
     let modalImage = event.target.src;
     let photosArray = photos[0].userPhotos;
@@ -53,16 +52,12 @@ class RestaurantPhotos extends React.Component {
     })
   }
 
-  generateHeaderView() {
-    return Math.round(Math.random());
-  }
-
   previous() {
     const { currentModalIndex } = this.state;
     const { photos } = this.props;
 
     if (currentModalIndex !== 0) {
-      this.setState({ currentModalIndex: this.state.currentModalIndex -= 1 })
+      this.setState({ currentModalIndex: this.state.currentModalIndex + 1 })
     } else {
       this.setState({ currentModalIndex: photos.length - 1 })
     }
@@ -73,7 +68,7 @@ class RestaurantPhotos extends React.Component {
     const { photos } = this.props;
 
     if (currentModalIndex !== photos.length) {
-      this.setState({ currentModalIndex: this.state.currentModalIndex += 1 })
+      this.setState({ currentModalIndex: this.state.currentModalIndex + 1 })
     } else {
       this.setState({ currentModalIndex: 0 })
     }
@@ -84,7 +79,7 @@ class RestaurantPhotos extends React.Component {
     const { photos, isLoading } = this.props
     const { showModal, currentModal, currentModalIndex } = this.state
 
-    if (isLoading) {
+    if (isLoading === false) {
       return (
         <div>
           <Header /><br></br>

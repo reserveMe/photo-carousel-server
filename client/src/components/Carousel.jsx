@@ -6,8 +6,8 @@ class Carousel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      restaurantPhotos: null,
-      isLoading: false,
+      restaurantPhotos: [],
+      isLoading: true,
     }
     this.getPhotos = this.getPhotos.bind(this);
   }
@@ -23,7 +23,7 @@ class Carousel extends React.Component {
         })
       })
       .catch((error) => {
-        console.log('Error fetching data');
+        console.log('Error fetching data'); z
       })
   }
 
