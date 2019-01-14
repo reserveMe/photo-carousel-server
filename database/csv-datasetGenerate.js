@@ -3,10 +3,9 @@ const faker = require('faker');
 const path = require('path');
 const cassandraMAP = require("cassandra-map");
 const json2csv = require('json2csv').parse;
+const jsonexport = require('jsonexport');
+Promise = require('bluebird');
 
-
-//const wstream = fs.createWriteStream(__dirname + '/max_data.csv', {flags: 'w'});
-//const wstream = fs.createWriteStream(__dirname + '/test.txt', {flags: 'w'});
 
 const strPhotoTypes = ['exterior', 'interior'];
 
@@ -600,6 +599,10 @@ const photoURLS = [
   "https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/woman-828888__340.jpg"
 ]
 
+const fields = ['id', 'name', 'phototags'];
+const optsHeader = { fields };
+const opts = { header: false, delimiter: '|', doubleQuote: "'"};
+
 const generateRandomNumber = (min_value , max_value) => {
     let random_number = Math.random() * (max_value - min_value) + min_value;
     return Math.floor(random_number);
@@ -609,7 +612,6 @@ const generateRandomBinary = (min_value , max_value) => {
     return Math.round(Math.random());
 };
 
-
 const generateRecords = (id) => {
 	let res = [];
   let entry;
@@ -618,48 +620,40 @@ const generateRecords = (id) => {
 
 			if (j < 4) {
         photoArraySchema = {
-          'photo_type': strPhotoTypes[generateRandomBinary()],
-          'date': faker.date.recent(90),
-          'photoURL': photoURLS[generateRandomNumber(0, 584)]
+          photo_type: strPhotoTypes[generateRandomBinary()],
+          date: faker.date.recent(90),
+          photoURL: photoURLS[generateRandomNumber(0, 584)]
         };
       } else {
         photoArraySchema = {
-          'photo_type': conPhotoTypes[generateRandomBinary()],
-          'date': faker.date.recent(90),
-          'photoURL': photoURLS[generateRandomNumber(0, 584)]
+          photo_type: conPhotoTypes[generateRandomBinary()],
+          date: faker.date.recent(90),
+          photoURL: photoURLS[generateRandomNumber(0, 584)]
         }; 
       }  
-      // console.log('check', test.slice(1, test.length-1));
          res.push(photoArraySchema);
 
     entry = {
-        '_id': id,
-        'name': faker.lorem.word(),
-        restaurant_photos: res,
-    };
-
-      
+        id: id,
+        name: faker.lorem.word(),
+        phototags: res,
+    };      
 
 	}
 
-  const fields = ['_id', 'name', 'restaurant_photos'];
-  const opts = { fields };
-	return json2csv(entry, opts);
+ return json2csv(entry, opts);
+
 };
 
 
-
-
-
-
-const TOTAL_RECORDS = 100;
+const TOTAL_RECORDS = 150;
 const MAX_PER_FILE = 50;
 let restaurantsSoFar = 0;
 
 const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
   let i = 0;
   let docID = 1;
-  let outputStream = fs.createWriteStream(path.join(__dirname, `/restaurantdata${docID}.csv`), { flags: 'w' })
+  let outputStream = fs.createWriteStream(path.join(__dirname, `/testdata${docID}.csv`), { flags: 'w' })
   .on('error', (err) => {
     if (err) throw err;
   })
@@ -668,10 +662,7 @@ const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
     if(i === recordsPerFile) {//Check to see if i === recordsPerFile to initiate stream to new docID
       i = 0;
       docID++;
-      outputStream = fs.createWriteStream(path.join(__dirname, `/restaurantdata${docID}.csv`))
-      .on('error', (err) =>{
-        if (err) throw err;
-      })      
+      outputStream = fs.createWriteStream(path.join(__dirname, `/testdata${docID}.csv`));   
     }
 
     if(restaurantsSoFar === totalRecords) { 
@@ -679,7 +670,7 @@ const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
     }
 
     restaurantsSoFar++;
-    const ok2Write = outputStream.write(generateRecords(restaurantsSoFar));
+    const ok2Write = outputStream.write(generateRecords(restaurantsSoFar) + '\n');
     if (ok2Write) {
       i++;
       write();

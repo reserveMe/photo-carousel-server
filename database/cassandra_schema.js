@@ -35,7 +35,7 @@ WITH REPLICATION = {
 // //test query syntax
 
 
-const setup = `CREATE TABLE sdc.restaurants (
+const setup = `CREATE TABLE test.new (
     id int  PRIMARY KEY,
     name text,
     phototags  list <frozen<map<text, text>>>
@@ -47,7 +47,9 @@ const setup = `CREATE TABLE sdc.restaurants (
 //        //console.log('restaurant', restaurant);
 // });
 
+COPY test.new (id, name, phototags) FROM 'testdata1.csv' WITH DELIMITER='|' AND HEADER=FALSE;
 
+COPY test.new FROM 'testdata1.csv' WITH HEADER=FALSE;
 
 // CREATE TABLE test.fourth (
 //     id int  PRIMARY KEY,
@@ -59,7 +61,7 @@ const setup = `CREATE TABLE sdc.restaurants (
 // INSERT INTO clients JSON '{"id":0,"name":"Lehner, Schuppe and Walker","phototags":[{"photo_type":"exterior","date":"2018-12-25T12:42:32.939Z","username":"Asia","photoURL":"https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/beverage-business-chairs-903376"}]}';
 
 // INSERT INTO secondexp (id, name, phototags) VALUES (0, 'Saratoga', [{phototype:"exterior","date":"2018-12-25T12:42:32.939Z","username":"Asia","photoURL":"https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/beverage-business-chairs-903376"}]);
- INSERT INTO thirdexp (id, name, phototags) VALUES (4, 'Katog', [{'phototype':'exterior'}, {}]);
+ INSERT INTO test.new (id, name, phototags) VALUES (4, 'Katog', [{'phototype':'exterior'}, {}]);
 
 // CREATE TYPE clients.photos ( photo_type text, date timestamp, username text, photoURL text);
 // CREATE TABLE clients.client_photos ( id UUID PRIMARY KEY, lastname text, firstname text, races list<FROZEN <race>> );
