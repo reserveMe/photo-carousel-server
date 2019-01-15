@@ -47,7 +47,15 @@ const setup = `CREATE TABLE test.new (
 //        //console.log('restaurant', restaurant);
 // });
 
-COPY test.new (id, name, phototags) FROM 'testdata1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=1 AND PAGESIZE=10 AND DELIMITER='|' AND HEADER=FALSE;
+//COPY test.new (id, name, phototags) FROM 'testdata1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=1 AND PAGESIZE=10 AND DELIMITER='|' AND HEADER=FALSE;
+
+COPY sdc.restaurants (id, name, phototags) FROM 'seed_data1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=2 AND NUMPROCESSES=10 AND CHUNKSIZE=5000 AND PREPAREDSTATEMENTS=False AND DELIMITER='|' AND HEADER=FALSE;
+
+
+COPY sdc.restaurants (id, name, phototags) FROM 'seed_data1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=1 AND DELIMITER='|' AND HEADER=FALSE;
+
+
+COPY test.check (id, name, phototags) FROM 'test_data1.csv' WITH MINBATCHSIZE=1 AND MAXBATCHSIZE=2 AND NUMPROCESSES=10 AND CHUNKSIZE=5000 AND PREPAREDSTATEMENTS=False AND DELIMITER='|' AND HEADER=FALSE;
 
 COPY test.new FROM 'testdata1.csv' WITH HEADER=FALSE;
 
@@ -63,5 +71,8 @@ COPY test.new FROM 'testdata1.csv' WITH HEADER=FALSE;
 // INSERT INTO secondexp (id, name, phototags) VALUES (0, 'Saratoga', [{phototype:"exterior","date":"2018-12-25T12:42:32.939Z","username":"Asia","photoURL":"https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/beverage-business-chairs-903376"}]);
  INSERT INTO test.new (id, name, phototags) VALUES (4, 'Katog', [{'phototype':'exterior'}, {}]);
 
-// CREATE TYPE clients.photos ( photo_type text, date timestamp, username text, photoURL text);
+//cassandra loader experimental command
+
+cassandra-loader -f seed_data1.csv -host 127.0.0.1 -schema "sdc.restaurants(id, name, phototags)"
+
 // CREATE TABLE clients.client_photos ( id UUID PRIMARY KEY, lastname text, firstname text, races list<FROZEN <race>> );

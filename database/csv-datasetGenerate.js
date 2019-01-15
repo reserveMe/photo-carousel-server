@@ -3,9 +3,6 @@ const faker = require('faker');
 const path = require('path');
 const cassandraMAP = require("cassandra-map");
 const json2csv = require('json2csv').parse;
-const jsonexport = require('jsonexport');
-Promise = require('bluebird');
-
 
 const strPhotoTypes = ['exterior', 'interior'];
 
@@ -641,33 +638,32 @@ const generateRecords = (id) => {
 
 	}
 
- return json2csv(entry, opts);
+return json2csv(entry, opts);
 
 };
 
-
-const TOTAL_RECORDS = 150;
-const MAX_PER_FILE = 50;
+const TOTAL_RECORDS = 1000000;
+const MAX_PER_FILE = 200000;
 let restaurantsSoFar = 0;
 
 const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
   let i = 0;
   let docID = 1;
-  let outputStream = fs.createWriteStream(path.join(__dirname, `/testdata${docID}.csv`), { flags: 'w' })
+  let outputStream = fs.createWriteStream(path.join(__dirname, `/test_data${docID}.csv`), { flags: 'w' })
   .on('error', (err) => {
     if (err) throw err;
   })
 
-  const write = () => {
-    if(i === recordsPerFile) {//Check to see if i === recordsPerFile to initiate stream to new docID
-      i = 0;
-      docID++;
-      outputStream = fs.createWriteStream(path.join(__dirname, `/testdata${docID}.csv`));   
-    }
+const write = () => {
+  if(i === recordsPerFile) {//Check to see if i === recordsPerFile to initiate stream to new docID
+    i = 0;
+    docID++;
+    outputStream = fs.createWriteStream(path.join(__dirname, `/test_data${docID}.csv`));   
+  }
 
-    if(restaurantsSoFar === totalRecords) { 
-      return;
-    }
+  if(restaurantsSoFar === totalRecords) { 
+    return;
+  }
 
     restaurantsSoFar++;
     const ok2Write = outputStream.write(generateRecords(restaurantsSoFar) + '\n');
@@ -684,6 +680,4 @@ const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
   write();
 }
 
-
 writeRestaurantEntries(TOTAL_RECORDS, MAX_PER_FILE);
-
