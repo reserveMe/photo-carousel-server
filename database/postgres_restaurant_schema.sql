@@ -7,6 +7,9 @@ CREATE TABLE restaurants (
 
 \COPY restaurants FROM './generated_data/seed_data17.csv' DELIMITERS '|' CSV QUOTE '''';
 
+
+\COPY restaurants FROM './generated_data/seed_data1.csv' DELIMITERS '|' CSV QUOTE '''';
+
 CREATE TABLE test (
  ID integer NOT NULL PRIMARY KEY,
  name text NOT NULL,
