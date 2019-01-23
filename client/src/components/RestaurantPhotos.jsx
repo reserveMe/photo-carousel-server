@@ -92,7 +92,7 @@ class RestaurantPhotos extends React.Component {
           <div>
             {showModal ? <Modal onClose={this.closeModal}
               modalImage={currentModal}
-              photos={photos[0]}
+              photos={photos}
               currentModalIndex={currentModalIndex}
               onPrevious={this.previous}
               onNext={this.next} /> : null}

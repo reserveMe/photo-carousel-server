@@ -1,5 +1,6 @@
 import React from 'react';
 import Masonry from 'react-masonry-component';
+import Image from 'react-image-resizer';
 
 const masonryOptions = {
   horizontalOrder: false,
@@ -14,7 +15,7 @@ class Mosaic extends React.Component {
       return photosToBeDisplayed.map((photo, index) => {
         return (
           <li id="carousel-tile">
-            <img src={photo.photoURL} key={index} data-id={index} onClick={onClick}></img>
+            <Image src={photo.photoURL} width={160} height={160} key={index} data-id={index} onClick={onClick}/>
           </li>
         )
       });
