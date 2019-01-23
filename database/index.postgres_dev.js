@@ -24,7 +24,9 @@ var db = pgp(conString);
 
 //var altQuery = `SELECT phototags FROM restaurants WHERE ID = ${restaurantID}`
 const getRestaurantInfo = (restaurantID, callback) => {
-  db.query(`SELECT * FROM restaurants_perf WHERE ID = 1008`)
+  //let id = restaurantID.toString()
+  console.log("query", restaurantID)
+  db.query(`SELECT * FROM restaurants_perf WHERE ID = 1000`)
    .then((results) => callback(null, results))
    .catch(err => callback(err));
 }
