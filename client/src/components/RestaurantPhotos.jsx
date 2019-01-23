@@ -105,5 +105,4 @@ class RestaurantPhotos extends React.Component {
   }
 }
 
-
 export default RestaurantPhotos;

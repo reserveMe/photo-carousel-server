@@ -26,7 +26,7 @@ var db = pgp(conString);
 const getRestaurantInfo = (restaurantID, callback) => {
   //let id = restaurantID.toString()
   console.log("query", restaurantID)
-  db.query(`SELECT * FROM restaurants_perf WHERE ID = 1000`)
+  db.query(`SELECT * FROM restaurants_perf WHERE ID = ${restaurantID}`)
    .then((results) => callback(null, results))
    .catch(err => callback(err));
 }

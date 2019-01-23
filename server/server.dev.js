@@ -13,7 +13,8 @@ app.use(cors());
 
 //get all photos associated with that restaurant
 app.get(`/api/restaurants/:id/photos`, (req, res) => {
-  db.getRestaurantInfo(req.params.restaurantID, (err, results) => {
+  console.log("server", req.params.id)
+  db.getRestaurantInfo(req.params.id, (err, results) => {
     if (err) {
       console.log(err);
       res.sendStatus(400);
