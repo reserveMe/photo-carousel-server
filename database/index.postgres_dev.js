@@ -25,11 +25,19 @@ var db = pgp(conString);
 //var altQuery = `SELECT phototags FROM restaurants WHERE ID = ${restaurantID}`
 const getRestaurantInfo = (restaurantID, callback) => {
   //let id = restaurantID.toString()
-  console.log("query", restaurantID)
+  //console.log("query", restaurantID)
   db.query(`SELECT * FROM restaurants_perf WHERE ID = ${restaurantID}`)
    .then((results) => callback(null, results))
    .catch(err => callback(err));
 }
+
+// const getRestaurantInfo = (restaurantID, callback) => {
+//   //let id = restaurantID.toString()
+//   console.log("query", restaurantID)
+//   db.query(`SELECT * FROM restaurants WHERE ID = ${restaurantID}`)
+//    .then((results) => callback(null, results))
+//    .catch(err => callback(err));
+// }
 
 //update restaurant photos route 
 //need to pull old info and compare against new input

@@ -35,8 +35,8 @@ class RestaurantPhotos extends React.Component {
       return photo.photoURL === modalImage;
     });
 
-    modalImage = modalImage.replace('thumbnails', 'large_photos');
-    modalImage = modalImage.replace('_small', '_large');
+    // modalImage = modalImage.replace('thumbnails', 'large_photos');
+    // modalImage = modalImage.replace('_small', '_large');
 
     this.setState({
       showModal: true,

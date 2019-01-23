@@ -1,3 +1,4 @@
+require('newrelic');
 const express = require('express');
 const bodyparser = require('body-parser');
 const cors = require('cors');
@@ -19,7 +20,7 @@ app.get(`/api/restaurants/:id/photos`, (req, res) => {
       console.log(err);
       res.sendStatus(400);
     } else {
-      console.log("route",  results.data)
+      //console.log("route",  results.data)
       res.send(results);
     }
   });
