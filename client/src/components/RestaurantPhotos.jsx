@@ -29,10 +29,10 @@ class RestaurantPhotos extends React.Component {
   openModal() {
     const { photos } = this.props
     let modalImage = event.target.src;
-    let photosArray = photos[0].userPhotos;
+    let photosArray = photos[0].phototags;
 
     const currentIndex = _.findIndex(photosArray, (photo) => {
-      return photo.photoThumbnail === modalImage;
+      return photo.photoURL === modalImage;
     });
 
     modalImage = modalImage.replace('thumbnails', 'large_photos');
@@ -88,11 +88,11 @@ class RestaurantPhotos extends React.Component {
       return (
         <div>
           <Header /><br></br>
-          <Mosaic photoArray={photos} onClick={this.openModal} />
+          <Mosaic photoArray={photos[0].phototags} onClick={this.openModal} />
           <div>
             {showModal ? <Modal onClose={this.closeModal}
               modalImage={currentModal}
-              photos={photos}
+              photos={photos[0]}
               currentModalIndex={currentModalIndex}
               onPrevious={this.previous}
               onNext={this.next} /> : null}

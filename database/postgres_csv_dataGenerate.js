@@ -596,9 +596,9 @@ const photoURLS = [
   "https://s3-us-west-1.amazonaws.com/sdc-restaurantproject-assets/images/woman-828888__340.jpg"
 ]
 
-const fields = ['id', 'name', 'phototags'];
+const fields = ['id', 'phototags'];
 const optsHeader = { fields };
-const opts = { header: false, delimiter: '|', doubleQuote: "'"};
+const opts = { header: false, delimiter: '|'};
 
 const generateRandomNumber = (min_value , max_value) => {
     let random_number = Math.random() * (max_value - min_value) + min_value;
@@ -642,8 +642,8 @@ return json2csv(entry, opts);
 
 };
 
-const TOTAL_RECORDS = 1000000;
-const MAX_PER_FILE = 200000;
+const TOTAL_RECORDS = 10000000;
+const MAX_PER_FILE = 5000000;
 let restaurantsSoFar = 0;
 
 const writeRestaurantEntries = (totalRecords, recordsPerFile) => {
