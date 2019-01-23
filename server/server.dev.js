@@ -18,8 +18,7 @@ app.get(`/api/restaurants/:id/photos`, (req, res) => {
       console.log(err);
       res.sendStatus(400);
     } else {
-      console.log("route", typeof results[0].phototags[0].photoURL)
-      res.status(200);
+      console.log("route",  results.data)
       res.send(results);
     }
   });

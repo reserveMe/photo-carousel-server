@@ -88,7 +88,7 @@ class RestaurantPhotos extends React.Component {
       return (
         <div>
           <Header /><br></br>
-          <Mosaic photoArray={photos[0].phototags} onClick={this.openModal} />
+          <Mosaic photoArray={photos} onClick={this.openModal} />
           <div>
             {showModal ? <Modal onClose={this.closeModal}
               modalImage={currentModal}
